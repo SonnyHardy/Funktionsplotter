@@ -15,16 +15,6 @@ import java.util.Stack;
  * unary operations, and function calls.
  */
 public class Parser {
-    public static void main(String[] args) {
-        // Example usage
-        try {
-            Expr expr = parse("-3 + 4 * x - sin(pi / 2)");
-            System.out.println(expr);
-        } catch (ParseException e) {
-            System.err.println("Parse error: " + e.getMessage());
-        }
-    }
-
 
     /**
      * Parses the input string into an expression tree.

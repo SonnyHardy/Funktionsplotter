@@ -11,8 +11,8 @@ import java.util.List;
 public class Tokenizer {
 
     public static List<Token> tokenize(String input) {
-        // This method should implement the logic to tokenize the input string
         List<Token> tokens = new ArrayList<>();
+        String foundVariable = null; // Pour stocker la première variable trouvée
 
         int i = 0;
         while (i < input.length()) {
@@ -37,13 +37,29 @@ public class Tokenizer {
                     value.append(input.charAt(i));
                     i++;
                 }
-                if (value.toString().equals("pi") || value.toString().equals("e")) {
+
+                String tokenValue = value.toString();
+
+                if (tokenValue.equals("pi") || tokenValue.equals("e")) {
                     // Handle special constants like pi and e
-                    tokens.add(new Token(TokenType.NUMBER, value.toString()));
-                } else if (value.toString().length() == 1) {
-                    tokens.add(new Token(TokenType.VARIABLE, value.toString()));
+                    tokens.add(new Token(TokenType.NUMBER, tokenValue));
+                } else if (tokenValue.length() == 1) {
+                    // C'est une variable
+                    if (foundVariable == null) {
+                        // Première variable trouvée
+                        foundVariable = tokenValue;
+                        tokens.add(new Token(TokenType.VARIABLE, tokenValue));
+                    } else if (foundVariable.equals(tokenValue)) {
+                        // Même variable que celle déjà trouvée
+                        tokens.add(new Token(TokenType.VARIABLE, tokenValue));
+                    } else {
+                        // Variable différente de celle déjà trouvée
+                        throw new IllegalArgumentException("Multiple variables not allowed. Found '" +
+                                foundVariable + "' and '" + tokenValue + "' in the same expression.");
+                    }
                 } else {
-                    tokens.add(new Token(TokenType.FUNCTION, value.toString()));
+                    // C'est une fonction
+                    tokens.add(new Token(TokenType.FUNCTION, tokenValue));
                 }
 
             } else {
