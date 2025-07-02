@@ -28,6 +28,7 @@ public class Parser {
         List<Token> rpnTokens = ConvertToRPN.toRPN(tokens);
 
         if (rpnTokens.isEmpty()) {
+            System.out.println("Empty expression provided for parsing.");
             throw new ParseException("Empty expression", 0);
         }
 
@@ -44,6 +45,8 @@ public class Parser {
 
                     case OPERATOR -> {
                         if (stack.size() < 2) {
+                            System.out.println("Insufficient operands for operator '" +
+                                    rpnToken.value() + "' at position " + i);
                             throw new ParseException("Insufficient operands for operator '" +
                                     rpnToken.value() + "' at position " + i, i);
                         }
@@ -54,6 +57,8 @@ public class Parser {
 
                     case UNARY_OPERATOR -> {
                         if (stack.isEmpty()) {
+                            System.out.println("Insufficient operands for unary operator '" +
+                                    rpnToken.value() + "' at position " + i);
                             throw new ParseException("Insufficient operands for unary operator '" +
                                     rpnToken.value() + "' at position " + i, i);
                         }
@@ -65,6 +70,8 @@ public class Parser {
 
                     case FUNCTION -> {
                         if (stack.isEmpty()) {
+                            System.out.println("Insufficient arguments for function '" +
+                                    rpnToken.value() + "' at position " + i);
                             throw new ParseException("Insufficient arguments for function '" +
                                     rpnToken.value() + "' at position " + i, i);
                         }
@@ -74,15 +81,22 @@ public class Parser {
                         stack.push(new FunctionCall(rpnToken.value(), List.of(arg)));
                     }
 
-                    default -> throw new ParseException("Unexpected rpnToken type: " +
-                            rpnToken.type() + " at position " + i, i);
+                    default -> {
+                        System.out.println("Unexpected token type: " + rpnToken.type() +
+                                " at position " + i);
+                        throw new ParseException("Unexpected rpnToken type: " +
+                                rpnToken.type() + " at position " + i, i);
+                    }
                 }
             } catch (EmptyStackException e) {
+                System.out.println("Malformed RPN expression: insufficient operands at position " + i);
                 throw new ParseException("Malformed RPN expression: insufficient operands at position " + i, i);
             }
         }
 
         if (stack.size() != 1) {
+            System.out.println("Invalid RPN expression: expected 1 result, got " + stack.size() +
+                    " elements remaining at the end of parsing.");
             throw new ParseException("Invalid RPN expression: expected 1 result, got " +
                     stack.size() + " elements remaining", input.length());
         }

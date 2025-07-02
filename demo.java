@@ -32,8 +32,8 @@ void main() {
 
     // Label Turtle 1
     // Turtle 1
-    var turtle = new Turtle(0, 200, 0, 25, 50, 0, 0);
-    turtle.forward(25).right(60).backward(25).right(60).forward(25).write();
+    var turtle = new Turtle(500, 500);
+    turtle.forward(500).write();
     // Turtle 1
     // Label Turtle 1
 
@@ -125,7 +125,7 @@ void triangle(Turtle turtle, double size) {
 
 void drawing(Turtle turtle, double size) {
     for (int i = 1; i <= 18; i++) {
-        turtle.color(i * 256 / 37, i * 256 / 37, 255, 1); // turtle color
+        turtle.color(255, i * 256 / 37, i * 256 / 37, 1); // turtle color
         turtle.width(1.0 - 1.0 / 36.0 * i);
         triangle(turtle, size + 1 - 2 * i);
         turtle.left(20).forward(5);

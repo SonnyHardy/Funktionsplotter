@@ -8,7 +8,7 @@ import java.util.Map;
  * This interface defines the structure for various types of expressions, including
  * binary operations, unary operations, constants, variables, and function calls.
  */
-public sealed interface Expr permits BinaryOp, Constant, FunctionCall, Variable, UnaryOp {
+public sealed interface Expr permits BinaryOp, Constant, FunctionCall, Variable, UnaryOp  {
 
 
     /**
@@ -27,6 +27,7 @@ public sealed interface Expr permits BinaryOp, Constant, FunctionCall, Variable,
              case Variable variable -> {
                  String name = variable.name();
                  if (!var.containsKey(name)) {
+                     System.out.println("Variable '" + name + "' is not defined in the provided map.");
                      throw new IllegalArgumentException("Variable not defined : " + name);
                  }
                  yield var.get(name);
@@ -65,12 +66,16 @@ public sealed interface Expr permits BinaryOp, Constant, FunctionCall, Variable,
             case "*" -> left * right;
             case "/" -> {
                 if (right == 0) {
+                    System.out.println("Division by zero is not allowed.");
                     throw new IllegalArgumentException("Division by zero is not allowed.");
                 }
                 yield left / right;
             }
             case "^" -> Math.pow(left, right);
-            default -> throw new IllegalArgumentException("Unknown operator : " + operator);
+            default -> {
+                System.out.println("Unknown operator: " + operator);
+                throw new IllegalArgumentException("Unknown operator: " + operator);
+            }
         };
     }
 
@@ -86,7 +91,10 @@ public sealed interface Expr permits BinaryOp, Constant, FunctionCall, Variable,
         return switch (operator) {
             case "+" -> operand; // Unary plus, no change
             case "-" -> -operand; // Unary minus
-            default -> throw new IllegalArgumentException("Unknown operator : " + operator);
+            default -> {
+                System.out.println("Unknown unary operator: " + operator);
+                throw new IllegalArgumentException("Unknown unary operator: " + operator);
+            }
         };
     }
 
@@ -103,15 +111,28 @@ public sealed interface Expr permits BinaryOp, Constant, FunctionCall, Variable,
             case "sin" -> Math.sin(arg);
             case "cos" -> Math.cos(arg);
             case "tan" -> Math.tan(arg);
-            case "log" -> Math.log(arg);
+            case "log", "ln" -> {
+                if (arg <= 0) {
+                    System.out.println("Cannot compute logarithm of a non-positive number: " + arg);
+                    throw new IllegalArgumentException("Cannot compute logarithm of a non-positive number: " + arg);
+                }
+                yield Math.log(arg);
+            }
+            case "asin" -> Math.asin(arg);
+            case "acos" -> Math.acos(arg);
+            case "atan" -> Math.atan(arg);
             case "sqrt" -> {
                 if (arg < 0) {
+                    System.out.println("Cannot compute square root of a negative number: " + arg);
                     throw new IllegalArgumentException("Cannot compute square root of a negative number: " + arg);
                 }
                 yield Math.sqrt(arg);
             }
             case "abs" -> Math.abs(arg);
-            default -> throw new IllegalArgumentException("Unknown function: " + func);
+            default -> {
+                System.out.println("Unsupported function: " + func);
+                throw new IllegalArgumentException("Unsupported function: " + func);
+            }
         };
     }
 

@@ -54,6 +54,8 @@ public class Tokenizer {
                         tokens.add(new Token(TokenType.VARIABLE, tokenValue));
                     } else {
                         // Variable différente de celle déjà trouvée
+                        System.out.println("Multiple variables not allowed. Found '" +
+                                foundVariable + "' and '" + tokenValue + "' in the same expression.");
                         throw new IllegalArgumentException("Multiple variables not allowed. Found '" +
                                 foundVariable + "' and '" + tokenValue + "' in the same expression.");
                     }
@@ -68,7 +70,10 @@ public class Tokenizer {
                     case ',' -> tokens.add(new Token(TokenType.COMMA, ","));
                     case '(' -> tokens.add(new Token(TokenType.LEFT_PAREN, "("));
                     case ')' -> tokens.add(new Token(TokenType.RIGHT_PAREN, ")"));
-                    default -> throw new IllegalArgumentException("Unexpected character: " + c);
+                    default -> {
+                        System.out.println("Unexpected character: " + c);
+                        throw new IllegalArgumentException("Unexpected character: " + c);
+                    }
                 }
                 i++;
             }
