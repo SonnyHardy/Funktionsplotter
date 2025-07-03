@@ -270,4 +270,55 @@ public class Turtle implements Clerk{
     private static record Color(int r, int g, int b, double a) {}
 
     public sealed interface Element permits Line, SvgText {}
+
+
+    /**
+     * Bewegt die Schildkröte von einem Punkt (x1, y1) zu einem anderen Punkt (x2, y2)
+     *
+     * @param x1 X-Koordinate des Startpunkts
+     * @param y1 Y-Koordinate des Startpunkts
+     * @param x2 X-Koordinate des Zielpunkts
+     * @param y2 Y-Koordinate des Zielpunkts
+     * @param draw wenn true, zeichnet eine Linie während der Bewegung; wenn false, bewegt sich ohne zu zeichnen
+     * @return die Schildkröte (um Methodenverkettung zu ermöglichen)
+     */
+    public Turtle moveTo(double x1, double y1, double x2, double y2, boolean draw) {
+        // Aktuellen Stiftzustand speichern
+        boolean originalPenState = state.penDown();
+
+        // Zum Startpunkt bewegen ohne zu zeichnen
+        penUp();
+        state = state.withPosition(x1, y1);
+
+        // Benötigten Winkel berechnen um von (x1, y1) zu (x2, y2) zu gelangen
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+        double targetAngle = Math.toDegrees(Math.atan2(dy, dx));
+
+        // Winkel der Schildkröte anpassen
+        state = state.withAngle((targetAngle % 360 + 360) % 360);
+
+        // Stift entsprechend dem Parameter 'draw' konfigurieren
+        if (draw) {
+            penDown();
+        } else {
+            penUp();
+        }
+
+        // Zu durchlaufende Distanz berechnen
+        double distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Zum Zielpunkt bewegen
+        forward(distance);
+
+        // Ursprünglichen Stiftzustand wiederherstellen
+        if (originalPenState) {
+            penDown();
+        } else {
+            penUp();
+        }
+
+        return this;
+    }
+
 }
