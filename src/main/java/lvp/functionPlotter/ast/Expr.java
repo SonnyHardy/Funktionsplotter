@@ -121,6 +121,7 @@ public sealed interface Expr permits BinaryOp, Constant, FunctionCall, Variable,
             case "asin" -> Math.asin(arg);
             case "acos" -> Math.acos(arg);
             case "atan" -> Math.atan(arg);
+            case "exp" -> Math.exp(arg);
             case "sqrt" -> {
                 if (arg < 0) {
                     System.out.println("Cannot compute square root of a negative number: " + arg);
