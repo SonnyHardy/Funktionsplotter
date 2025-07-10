@@ -1,166 +1,116 @@
 import lvp.Clerk;
 import lvp.skills.Text;
 import lvp.skills.Interaction;
-import lvp.views.Dot;
-import lvp.views.Turtle;
+import lvp.functionPlotter.plotter.FunctionPlotter;
 
 
 void main() {
     Clerk.clear();
     // Markdown 1
     Clerk.markdown(Text.fillOut("""
-    # Interaktive LVP Demo
+    # Funktionsplotter - Interaktive Funktionsvisualisierung
 
-    ## Markdown
-    Die Markdown-View erlaubt es, Markdown-Text direkt im Browser darzustellen. Der folgende Code zeigt ein einfaches Beispiel, wie Text im Markdown-Format 
-    an den Browser gesendet und dort automatisch als HTML gerendert wird:
+    ## Projektübersicht
+    Der **Funktionsplotter** ist ein leistungsstarkes Werkzeug zur Analyse und Visualisierung mathematischer Funktionen. Er ermöglicht es, mathematische Ausdrücke einzugeben, sie zu analysieren und grafisch darzustellen. Das Projekt bietet folgende Hauptfunktionen:
+
+    - Auswertung mathematischer Ausdrücke
+    - Generierung und Visualisierung abstrakter Syntaxbäume (AST)
+    - Grafische Darstellung von Funktionen in einem kartesischen Koordinatensystem
+    - Unterstützung verschiedener mathematischer Operationen und Funktionen
+
+    Diese interaktive Dokumentation demonstriert die Funktionalitäten des Projekts und gibt Einblicke in die Implementation.
+
+    ## Funktionalitäten
+
+    ### Implementierte Funktionen
+
+    - **Ausdruckseingabe**: Funktionen können in Infix-Notation eingegeben werden (z.B. `x^2 + 3*x`) und RPN-Notation (z.B. `x 2 ^ 3 * +`)
+    - **Taschenrechnermodus**: Sofortige Auswertung von Ausdrücken ohne Variablen
+    - **AST-Generierung**: Erzeugung eines abstrakten Syntaxbaums für jeden Ausdruck
+    - **AST-Visualisierung**: Darstellung des AST mittels DOT/Graphviz
+    - **Funktionsdarstellung**: Zeichnung von Funktionen in einem kartesischen Koordinatensystem
+    - **Mehrfarbige Darstellung**: Verschiedene Funktionen können in unterschiedlichen Farben dargestellt werden
+    - **Umfangreiche Unterstützung mathematischer Operationen**: `+`, `-`, `*`, `/`, `^`, `sqrt`, `log`, `ln`, `sin`, `cos`, `tan`, `pi`, `π`, `e` usw.
+
+    ### Geplante Funktionalitäten
+
+    - **Interaktives Zoomen/Verschieben**: Dynamische Anpassung des sichtbaren Bereichs im Koordinatensystem
+    - **Parametrische Funktionen**: Unterstützung von Funktionen mit anpassbaren Parametern über Schieberegler
+    - **Mehrfache Funktionseingabe**: Gleichzeitige Eingabe mehrerer Funktionen über die Benutzeroberfläche
+    - **Logarithmische/Lineare Achsen**: Auswählbare Achsenskalierung
+    - **Bedingte Funktionen**: Unterstützung von Ausdrücken wie `x <= 0 ? 0 : 1`
+
+    ## Beispiel: Funktionsvisualisierung
+
+    Der folgende Code demonstriert die grundlegende Verwendung des Funktionsplotters:
+
     ```java
     ${0}
     ```
-    Der Aufruf `Clerk.markdown(text)` elaubt den einfachen Zugriff auf die Markdown-View.
-    In diesem Beispiel werden zusätzlich zwei unterstützende Skills verwendet:
-    - `Text.fillOut(...)`: Zum Befüllen von String-Vorlagen mit dynamischen Inhalten, indem Platzhalter (z.B. ${2}) durch die Auswertung von übergebenen Ausdrücken ersetzt werden.
-    - `Text.codeBlock(...)`: Zum Einbinden von Codeabschnitten als interaktive Blöcke im Markdown-Text.
 
-    ## Turtle
-    Die Turtle-View ermöglicht das Zeichnen und Anzeigen von SVG-Grafiken im Browser. Diese können Schritt für Schritt aufgebaut werden:
-    ```java
-    ${1}
-    ```
-    """, Text.codeBlock("./demo.java", "// Markdown 1"), Text.codeBlock("./demo.java", "// Turtle 1"), "${0}"));
+    Im obigen Beispiel wird zunächst ein Funktionsplotter mit dem Intervall `[-10;10]` initialisiert. Anschließend werden drei mathematische Funktionen definiert:
+    1. `exp(x) + e` - Die Exponentialfunktion plus der Eulerschen Zahl
+    2. `x * x * x - 2 * x` - Eine kubische Funktion
+    3. `cos(x)` - Die Kosinus-Funktion
+
+    Für jede dieser Funktionen wird zuerst der abstrakte Syntaxbaum (AST) visualisiert, der die interne Struktur des mathematischen Ausdrucks zeigt. Danach werden die Funktionen im kartesischen Koordinatensystem gezeichnet, wobei jede Funktion eine eigene Farbe erhält (Rot, Blau und Grün).
+
+    Am Ende wird die fertige Visualisierung ausgegeben.
+    """, Text.codeBlock("./demo.java", "// Function Plotter Example")));
     // Markdown 1
 
-    // Label Turtle 1
-    // Turtle 1
-    var turtle = new Turtle(0, 200, 0, 25, 50, 0, 0);
-    turtle.forward(25).right(60).backward(25).right(60).forward(25).write();
-    // Turtle 1
-    // Label Turtle 1
+    // Function Plotter Example
+    // Input-Felder für Funktionen und Intervall
+    Clerk.markdown("### Eingabeparameter anpassen");
 
-    Clerk.markdown(Text.fillOut("""
-        
-    ## Interaktionen
-    Die Live-View ist nicht nur ein Anzeigewerkzeug, sondern dient auch als interaktiver Editor. Änderungen an eingebetteten Code-Blöcken wirken sich direkt auf die zugrunde liegende 
-    Datei aus. Dadurch kann der dokumentierte Code live ausprobiert und bearbeitet werden.
-    Ein interaktiver Code-Block wird mithilfe von `Text.codeBlock(...)` definiert. Der entsprechende Code im Quelltext muss durch Kommentar-Labels (z.B. `// Turtle 1`) markiert werden:
-    ```java
-    ${0}
-    ```
-    Dieser markierte Block kann anschließend über `Text.codeBlock("./demo.java", "// Turtle 1")` eingebunden werden. Wird dieser Block in einen Markdown-Abschnitt eingefügt, erscheint 
-    er in der Live-View als editierbarer Code-Bereich.
+    // Variablen für die Eingabeparameter deklarieren
+    String interval = "[-10;10]";
+    String fx = "exp(x) + e";
+    String gx = "x * x * x - 2 * x";
+    String hx = "cos(x)";
 
-    Zusätzlich können JavaScript-Funktionen eingebunden werden, die gezielt Teile des Quelltexts verändern. Dafür wird `Interaction.eventFunction(...)` verwendet. Dieser Skill liefert 
-    eine Funktion, die anhand des Dateipfads, eines Labels und des neuen Codes eine markierte Zeile ersetzt.
-    
-    Um solche Funktionen interaktiv nutzbar zu machen, kann `Interaction.button(...)` verwendet werden. Damit lässt sich ein Button erstellen, der bei Klick eine bestimmte Stelle im Code anpasst:
-    ```java 
-    ${1}
-    ```
+    // Eingabefelder für Parameter ohne Aktualisierung
+    Clerk.markdown("**Intervall:** (Format: [min;max])");
+    Clerk.write(Interaction.input("./demo.java", "// Interval Update", "interval = \"$\";", interval));
+    interval = "[-10;10]"; // Interval Update
 
-    ### Color Change
-    Im folgenden Beispiel wird eine Turtle-Grafik dargestellt:
-    ```java
-    ${2}
-    ```
-    
-    """, Text.codeBlock("./demo.java", "// Label Turtle 1"), Text.codeBlock("./demo.java", "// Buttons"), Text.codeBlock("./demo.java", "// Turtle triangle")));
+    Clerk.markdown("**Funktionen eingeben:**");
 
-    // Turtle 2
-    var turtle2 = new Turtle(0, 200, 0, 50, 100, 12, 0);
-    drawing(turtle2, 24);
-    turtle2.write();
-    // Turtle 2
-    
-    Clerk.markdown("""
-            Darunter befinden sich drei Buttons, die jeweils die Farbe der Turtle ändern. Die zu ersetzende Stelle im Quellcode ist durch das Label `// turtle color` markiert. Beim Klick auf einen Button wird
-            dieser Teil des Codes automatisch angepasst.
-            """);
+    Clerk.markdown("Funktion f(x) - <span style='color:red'>rot</span>:");
+    Clerk.write(Interaction.input("./demo.java", "// fx Update", "fx = \"$\";", fx));
+    fx = "exp(x) - x^2"; // fx Update
 
-    // Buttons
-    Clerk.write(Interaction.button("Red", 200, 50, Interaction.eventFunction("./demo.java", "// turtle color", "turtle.color(255, i * 256 / 37, i * 256 / 37, 1);")));
-    Clerk.write(Interaction.button("Green", 200, 50, Interaction.eventFunction("./demo.java", "// turtle color", "turtle.color(i * 256 / 37, 255, i * 256 / 37, 1);")));
-    Clerk.write(Interaction.button("Blue", 200, 50, Interaction.eventFunction("./demo.java", "// turtle color", "turtle.color(i * 256 / 37, i * 256 / 37, 255, 1);")));
-    // Buttons
+    Clerk.markdown("Funktion g(x) - <span style='color:blue'>blau</span>:");
+    Clerk.write(Interaction.input("./demo.java", "// gx Update", "gx = \"$\";", gx));
+    // gx Update
 
-    Clerk.markdown(Text.fillOut("""
-            ### Turtle mit Timeline
-            Die Turtle-View unterstützt außerdem eine Timeline, über die sich die Zeichenreihenfolge der Grafik Schritt für Schritt nachvollziehen lässt:
-            ```java
-            ${0}
-            ```
-            """, Text.codeBlock("./demo.java", "// Turtle 3")));
+    Clerk.markdown("Funktion h(x) - <span style='color:green'>grün</span>:");
+    Clerk.write(Interaction.input("./demo.java", "// hx Update", "hx = \"$\";", hx));
+    // hx Update
 
-    // Turtle 3
-    var turtle3 = new Turtle(0, 200, 0, 50, 100, 12, 0);
-    drawing(turtle3, 24);
-    turtle3.write().timelineSlider();
-    // Turtle 3
+    // FunctionPlotter mit dem Intervall initialisieren
+    FunctionPlotter plotter = new FunctionPlotter(interval);
 
-    Clerk.markdown(Text.fillOut("""
-    ### Input
-    Initialisierung von Variablen über ein Eingabefeld:
-    ```java
-    ${0}
-    ```
-    Der Skill `Interaction.input(...)` ermöglicht es, Eingabefelder zu erstellen, die genutzt werden können, um Werte in den Quelltext einzufügen.
-    Dazu wird Pfad und Label angegeben, um die Zeile zu makieren, in der der Wert eingefügt werden soll. Gleichzeitig wird das Label als Beschriftung des Eingabefelds verwendet.
-    Ein Template wird angegeben, das den Platzhalter `$` enthält, der durch den eingegebenen Wert ersetzt wird. Optional kann ein Platzhaltertext angegeben werden,
-    der im Eingabefeld angezeigt wird. Zusätzlich kann der Type des Eingabefelds angegeben werden (z.B. `text`, `number`, `email`).
-    
-    """, Text.codeBlock("./demo.java", "// Input")));
-    
-    // Input
-    int exampleValue = 255; // Input Example
-    Clerk.write(Interaction.input("./demo.java", "// Input Example", "int exampleValue = $;", "Geben Sie eine Zahl ein"));
+    // AST (Abstrakter Syntaxbaum) für jede Funktion visualisieren
+    Clerk.markdown("### Abstrakte Syntaxbäume (AST)");
 
-    String exampleString = "new String"; // Input String Example
-    Clerk.write(Interaction.input("./demo.java", "// Input String Example", "String exampleString = \"$\";", "Geben Sie einen String ein"));
-    // Input
+    Clerk.markdown("**f(x) = " + fx + "**");
+    plotter.drawExpressionAST(fx);    // Zeigt die interne Struktur des Ausdrucks
 
-    Clerk.markdown(Text.fillOut("""
-    #### Checkbox
-    Für Checkboxen kann `Interaction.checkbox(...)` verwendet werden. Diese triggern die Änderung des Quelltextes, wenn sie angeklickt werden.
-    ```java
-    ${0}
-    ```
-    """, Text.codeBlock("./demo.java", "// Checkbox")));
+    Clerk.markdown("**g(x) = " + gx + "**");
+    plotter.drawExpressionAST(gx);
 
-    // Checkbox
-    boolean booleanValue = false; // Boolean Example
-    Clerk.write(Interaction.checkbox("./demo.java", "// Boolean Example", "boolean booleanValue = $;", booleanValue));
-    // Checkbox
+    Clerk.markdown("**h(x) = " + hx + "**");
+    plotter.drawExpressionAST(hx);
 
-    Clerk.markdown(Text.fillOut("""
-    ## Dot View
-    Die Dot-View erlaubt das Anzeigen von Graphen, die im [DOT-Format](https://graphviz.org/doc/info/lang.html) beschrieben sind.
-    ```java
-    ${0}
-    ```
-    """, Text.codeBlock("./demo.java", "// Dot")));
+    // Funktionen mit unterschiedlichen Farben im Koordinatensystem zeichnen
+    Clerk.markdown("### Funktionsgraphen");
+    plotter.plotFunction(fx, 255, 0, 0);  // Rot für die Funktion f(x)
+    plotter.plotFunction(gx, 0, 0, 255);  // Blau für die Funktion g(x)
+    plotter.plotFunction(hx, 0, 255, 0);  // Grün für die Funktion h(x)
 
-    // Dot
-    Dot dot = new Dot();
-    dot.draw("""
-    digraph G {
-        A -> B;
-        B -> C;
-    }
-    """);
-    // Dot
+    // Ergebnis als SVG-Grafik ausgeben
+    plotter.writeTurtle();
+    // Function Plotter Example
+
 }
-
-
-// Turtle triangle
-void triangle(Turtle turtle, double size) {
-    turtle.forward(size).right(60).backward(size).right(60).forward(size).right(60 + 180);
-}
-
-void drawing(Turtle turtle, double size) {
-    for (int i = 1; i <= 18; i++) {
-        turtle.color(255, i * 256 / 37, i * 256 / 37, 1); // turtle color
-        turtle.width(1.0 - 1.0 / 36.0 * i);
-        triangle(turtle, size + 1 - 2 * i);
-        turtle.left(20).forward(5);
-    }
-}
-// Turtle triangle

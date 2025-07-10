@@ -40,7 +40,7 @@ public class Tokenizer {
 
                 String tokenValue = value.toString();
 
-                if (tokenValue.equals("pi") || tokenValue.equals("e")) {
+                if (tokenValue.equals("pi") || tokenValue.equals("e") || tokenValue.equals("π") || tokenValue.equals("ℯ")) {
                     // Handle special constants like pi and e
                     tokens.add(new Token(TokenType.NUMBER, tokenValue));
                 } else if (tokenValue.length() == 1) {

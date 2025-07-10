@@ -63,7 +63,7 @@ public class Parser {
                                     rpnToken.value() + "' at position " + i, i);
                         }
                         Expr operand = stack.pop();
-                        // Enlever le préfixe 'u' pour l'opérateur unaire
+                        // Remove the leading '-' or '+' from the operator
                         String op = rpnToken.value().substring(1);
                         stack.push(new UnaryOp(op, operand));
                     }
@@ -75,8 +75,6 @@ public class Parser {
                             throw new ParseException("Insufficient arguments for function '" +
                                     rpnToken.value() + "' at position " + i, i);
                         }
-                        // Pour l'instant, on assume les fonctions à un argument
-                        // À adapter selon le nombre d'arguments requis par chaque fonction
                         Expr arg = stack.pop();
                         stack.push(new FunctionCall(rpnToken.value(), List.of(arg)));
                     }
@@ -113,8 +111,8 @@ public class Parser {
      */
     private static double parseNumber(String value) {
         return switch (value.toLowerCase()) {
-            case "pi" -> Math.PI;
-            case "e" -> Math.E;
+            case "pi", "π" -> Math.PI;
+            case "e", "ℯ" -> Math.E;
             default -> Double.parseDouble(value);
         };
     }
