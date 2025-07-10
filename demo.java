@@ -110,10 +110,10 @@ void main() {
     """, Text.codeBlock("./demo.java", "// Input")));
     
     // Input
-    int exampleValue = 0; // Input Example
+    int exampleValue = 255; // Input Example
     Clerk.write(Interaction.input("./demo.java", "// Input Example", "int exampleValue = $;", "Geben Sie eine Zahl ein"));
 
-    String exampleString; // Input String Example
+    String exampleString = "new String"; // Input String Example
     Clerk.write(Interaction.input("./demo.java", "// Input String Example", "String exampleString = \"$\";", "Geben Sie einen String ein"));
     // Input
 

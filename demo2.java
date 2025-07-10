@@ -8,6 +8,8 @@ import lvp.functionPlotter.ast.*;
 import lvp.functionPlotter.parser.Parser;
 import java.text.ParseException;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 void main() {
@@ -79,14 +81,6 @@ void main() {
         e.printStackTrace();
     }
 
-    // Draw function f(x) = sin(x) with green color
-    //turtle.color(0, 255, 0).width(1.0);
-    //plotFunction(turtle, x -> Math.sin(x), xFrom, yFrom, viewWidth, viewHeight, 0.1);
-
-    // Draw function f(x) = x³ - 2x with blue color
-    //turtle.color(0, 0, 255).width(2.0);
-    //plotFunction(turtle, x -> x * x * x - 2 * x, xFrom, yFrom, viewWidth, viewHeight, 0.1);
-
     turtle.write();
     // Turtle 1
     // Label Turtle 1
@@ -102,48 +96,66 @@ void main() {
     Clerk.write(Interaction.button("Blue", Interaction.eventFunction("./demo2.java", "// turtle color", "turtle.color(i * 256 / 37, i * 256 / 37, 255, 1);")));
     // Buttons
 
+    // AST Visualization Demo
+    Clerk.markdown(Text.fillOut("""
+    ## AST-Visualisierung
+    Die folgende Visualisierung zeigt den abstrakten Syntaxbaum (AST), der aus einem mathematischen Ausdruck generiert wurde.
+    Jeder Knoten im Baum ist nach seinem Typ eingefärbt:
+    - **Grün**: Variablen
+    - **Blau**: Konstanten
+    - **Rot**: Binäre Operatoren
+    - **Orange**: Unäre Operatoren
+    - **Violett**: Funktionen
+
+    ```java
+    ${0}
+    ```
+    """, Text.codeBlock("./demo2.java", "// AST Drawing")));
+
+    // AST Drawing
+    String expression = "-sin(x) + 2 * (x^2 - 1)"; // Expression Example
+    Clerk.write(Interaction.input("./demo2.java", "// Expression Example", "String expression = \"$\";", "Geben Sie einen mathematischen Ausdruck ein"));
+    drawExpressionAST(expression);
+    // AST Drawing
 }
 
 
 /**
- * Plots a mathematical function using a Turtle.
+ * Zeichnet eine mathematische Funktion mit einer Turtle.
  *
- * @param turtle The Turtle instance to use for drawing.
- * @param functionExpression The mathematical function to plot, represented as a String.
- * @param xFromMath The starting x-coordinate in mathematical coordinates.
- * @param xToMath The ending x-coordinate in mathematical coordinates.
- * @param yFromMath The starting y-coordinate in mathematical coordinates.
- * @param yToMath The ending y-coordinate in mathematical coordinates.
- * @param step The step size for converting mathematical coordinates to pixel coordinates.
- * @return The Turtle instance after plotting the function (for method chaining).
+ * @param turtle Die Turtle-Instanz für das Zeichnen.
+ * @param functionExpression Die mathematische Funktion zum Zeichnen, als String dargestellt.
+ * @param xFromMath Die Start-X-Koordinate in mathematischen Koordinaten.
+ * @param xToMath Die End-X-Koordinate in mathematischen Koordinaten.
+ * @param yFromMath Die Start-Y-Koordinate in mathematischen Koordinaten.
+ * @param yToMath Die End-Y-Koordinate in mathematischen Koordinaten.
+ * @param step Die Schrittgröße für die Umrechnung von mathematischen Koordinaten in Pixelkoordinaten.
+ * @return Die Turtle-Instanz nach dem Zeichnen der Funktion (für Methodenverkettung).
  */
 public Turtle plotFunction(Turtle turtle, String functionExpression,
                            double xFromMath, double xToMath, double yFromMath, double yToMath,
                            double step) {
 
-    System.out.println("DEBUG: Entering plotFunction");
     turtle.push();
 
     boolean firstPoint = true;
     double prevXPixel = 0, prevYPixel = 0;
-    //final double stepSize = Math.min(0.05, (xToMath - xFromMath) / 1000.0);
-    final double stepSize = 0.1; // Schrittweite für die Auswertung der Funktion
+    final double stepSize = Math.min(0.05, (xToMath - xFromMath) / 1000.0);
+    //final double stepSize = 0.1; // Schrittweite für die Auswertung der Funktion
 
-    // Parse the function expression into an Expr object
+    // Funktion-Ausdruck in ein Expr-Objekt parsen
     Expr function = null;
     try {
-        System.out.println("DEBUG: About to parse expression: " + functionExpression);
         function = Parser.parse(functionExpression);
-        System.out.println("DEBUG: Parsing successful");
     } catch (ParseException e) {
-        System.out.println("Error parsing function expression: " + e.getMessage());
-        return turtle; // Return the turtle without drawing if parsing fails
+        System.out.println("Fehler beim Parsen des Funktionsausdrucks: " + e.getMessage());
+        return turtle; // Turtle ohne Zeichnung zurückgeben, wenn das Parsen fehlschlägt
     } catch (Exception e) {
-        System.out.println("Unexpected error while parsing function expression: " + e.getMessage());
-        return turtle; // Return the turtle without drawing if an unexpected error occurs
+        System.out.println("Unerwarteter Fehler beim Parsen des Funktionsausdrucks: " + e.getMessage());
+        return turtle; // Turtle ohne Zeichnung zurückgeben, wenn ein unerwarteter Fehler auftritt
     }
 
-    assert  function != null : "Function expression could not be null";
+    assert  function != null : "Funktionsausdruck darf nicht null sein";
     String variableName = extractVariableName(functionExpression);
 
     for (double xMath = xFromMath; xMath <= xToMath; xMath += stepSize) {
@@ -153,7 +165,7 @@ public Turtle plotFunction(Turtle turtle, String functionExpression,
             Map<String, Double> variable = Map.of(variableName, xMath);
             double yMath = function.evaluate(function, variable);
 
-            // Prüfen ob Y-Wert im sichtbaren Bereich liegt (coordonnées mathématiques)
+            // Prüfen ob Y-Wert im sichtbaren Bereich liegt (mathematische Koordinaten)
             if (yMath >= yFromMath && yMath <= yToMath) {
                 // Umrechnung der mathematischen Koordinaten in Pixelkoordinaten
                 double xPixel = xMath * step;
@@ -204,7 +216,7 @@ public Turtle drawCartesianSystem(Turtle turtle, double xFromPixel, double xToPi
 
     if (showGrid) {
         // Rasterlinien zeichnen
-        turtle.color(200, 200, 200).width(0.5); // Hellgrau, dünn
+        turtle.color(200, 200, 200).width(0.1); // Hellgrau, dünn
 
         // Vertikale Rasterlinien
         for (double x = xFromPixel; x <= xToPixel; x += step) {
@@ -226,7 +238,7 @@ public Turtle drawCartesianSystem(Turtle turtle, double xFromPixel, double xToPi
         }
 
         // Horizontale Rasterlinien und Nummerierung der Y-Achse
-        turtle.color(200, 200, 200).width(0.5); // Zurück zu Hellgrau für Raster
+        turtle.color(200, 200, 200).width(0.1); // Zurück zu Hellgrau für Raster
         for (double y = yFromPixel; y <= yToPixel; y += step) {
             if (y != 0) { // Nicht die X-Achse übermalen
                 turtle.moveTo(xFromPixel, y, xToPixel, y, true);
@@ -304,18 +316,16 @@ public double calculateStep(double xFrom, double xTo, double viewWidth) {
     double idealStep = viewWidth / range;
 
     if (viewWidth % idealStep == 0) {
-        System.out.println("Step " + idealStep);
         return idealStep; // Wenn die Schrittweite genau passt, verwenden
     }
 
     // Ansonsten den Divisor finden, der am nächsten an der idealen Schrittweite liegt
     double closestDivisor = findClosestDivisor(viewWidth, idealStep);
-    System.out.println("Step " + closestDivisor);
     return  closestDivisor;
 }
 
 /*
-* Findet den Divisor von 'number', der am nächsten an 'target' liegt.
+* Findet den Teiler von 'number', der am nächsten an 'target' liegt.
  */
 private double findClosestDivisor(double number, double target) {
     double closestDivisor = 1.0;
@@ -323,7 +333,7 @@ private double findClosestDivisor(double number, double target) {
 
     // alle Divisoren von 'number' durchgehen
     for (double divisor = 1.0; divisor <= number; divisor += 1.0) {
-        if (number % divisor == 0) { // divisor est un diviseur de number
+        if (number % divisor == 0) { // divisor ist ein Teiler von number
             double difference = Math.abs(target - divisor);
             if (difference < minDifference) {
                 minDifference = difference;
@@ -332,4 +342,130 @@ private double findClosestDivisor(double number, double target) {
         }
     }
     return closestDivisor;
+}
+
+
+/**
+ * Zeichnet den abstrakten Syntaxbaum (AST) eines mathematischen Ausdrucks.
+ * Verwendet die umgekehrte polnische Notation (RPN) und die Dot-Bibliothek, um einen visuellen Graphen zu erzeugen.
+ *
+ * @param expression Der zu analysierende und zu visualisierende mathematische Ausdruck
+ */
+public void drawExpressionAST(String expression) {
+    try {
+        // Ausdruck analysieren, um den AST zu erstellen
+        Expr ast = Parser.parse(expression);
+
+        // Dot für die Zeichnung des Graphen initialisieren
+        Dot dot = new Dot();
+
+        // DOT-Graph für den AST generieren
+        String dotGraph = generateASTDotGraph(ast);
+
+        // Ursprünglichen Ausdruck über dem Graphen anzeigen
+        Clerk.markdown("**Ausdruck**: `" + expression + "`");
+
+        // Graph mit Dot zeichnen
+        dot.draw(dotGraph);
+
+    } catch (ParseException e) {
+        Clerk.markdown("**Analysefehler**: " + e.getMessage());
+    }
+}
+
+/**
+ * Erzeugt eine DOT-Darstellung (für Graphviz) des abstrakten Syntaxbaums.
+ * Verwendet verschiedene Farben, um die Knotentypen zu unterscheiden:
+ * - Grün: Variablen
+ * - Blau: Konstanten
+ * - Rot: Binäre Operatoren
+ * - Orange: Unäre Operatoren
+ * - Violett: Funktionen
+ *
+ * @param ast Der darzustellende abstrakte Syntaxbaum
+ * @return Der String mit dem DOT-Graphen
+ */
+private String generateASTDotGraph(Expr ast) {
+    StringBuilder dotBuilder = new StringBuilder();
+    dotBuilder.append("digraph AST {\n");
+    dotBuilder.append("  node [fontname=\"Arial\"];\n");
+    dotBuilder.append("  edge [fontname=\"Arial\"];\n");
+    dotBuilder.append("  rankdir=TB;\n"); // Richtung von oben nach unten
+
+    // Zähler für die Erzeugung eindeutiger Kennungen für die Knoten
+    AtomicInteger counter = new AtomicInteger(0);
+
+    // Knoten und Kanten des Graphen rekursiv erzeugen
+    generateDotNodes(ast, dotBuilder, counter, null, null);
+
+    dotBuilder.append("}\n");
+    return dotBuilder.toString();
+}
+
+/**
+ * Erzeugt rekursiv die Knoten und Kanten des DOT-Graphen für den AST.
+ *
+ * @param expr Der aktuelle Ausdrucksknoten
+ * @param dotBuilder Der StringBuilder zum Erstellen des DOT-Strings
+ * @param counter Zähler zum Generieren eindeutiger Knoten-IDs
+ * @param parentId Die ID des übergeordneten Knotens (null für den Wurzelknoten)
+ * @param edgeLabel Beschriftung für die Kante vom übergeordneten Knoten (null für den Wurzelknoten)
+ * @return Die ID des erstellten Knotens
+ */
+private String generateDotNodes(Expr expr, StringBuilder dotBuilder, AtomicInteger counter, 
+                               String parentId, String edgeLabel) {
+    String nodeId = "node" + counter.getAndIncrement();
+    String nodeLabel = "";
+    String nodeColor = "";
+    String shape = "ellipse";
+
+    // Inhalt, Farbe und Form des Knotens je nach Typ bestimmen
+    if (expr instanceof Constant c) {
+        nodeLabel = String.valueOf(c.value());
+        nodeColor = "#6495ED"; // Blau für Konstanten
+    } else if (expr instanceof Variable v) {
+        nodeLabel = v.name();
+        nodeColor = "#32CD32"; // Grün für Variablen
+        shape = "diamond";
+    } else if (expr instanceof BinaryOp op) {
+        nodeLabel = op.operator();
+        nodeColor = "#FF4500"; // Rot für binäre Operatoren
+        shape = "circle";
+
+        // Kindknoten erstellen
+        String leftId = generateDotNodes(op.left(), dotBuilder, counter, nodeId, "links");
+        String rightId = generateDotNodes(op.right(), dotBuilder, counter, nodeId, "rechts");
+    } else if (expr instanceof UnaryOp op) {
+        nodeLabel = op.operator();
+        nodeColor = "#FFA500"; // Orange für unäre Operatoren
+        shape = "circle";
+
+        // Kindknoten erstellen
+        String childId = generateDotNodes(op.operand(), dotBuilder, counter, nodeId, "operand");
+    } else if (expr instanceof FunctionCall func) {
+        nodeLabel = func.functionName();
+        nodeColor = "#9370DB"; // Violett für Funktionen
+        shape = "box";
+
+        // Argumentknoten erstellen
+        for (int i = 0; i < func.arguments().size(); i++) {
+            String argId = generateDotNodes(func.arguments().get(i), dotBuilder, counter, nodeId, "arg" + (i+1));
+        }
+    }
+
+    // Knoten zum Graphen hinzufügen
+    dotBuilder.append("  " + nodeId + " [label=\"" + nodeLabel + "\", ");
+    dotBuilder.append("style=filled, fillcolor=\"" + nodeColor + "\", ");
+    dotBuilder.append("shape=" + shape + "];\n");
+
+    // Kante vom übergeordneten Knoten hinzufügen, wenn es nicht der Wurzelknoten ist
+    if (parentId != null) {
+        dotBuilder.append("  " + parentId + " -> " + nodeId);
+        if (edgeLabel != null) {
+            dotBuilder.append(" [label=\"" + edgeLabel + "\"];");
+        }
+        dotBuilder.append("\n");
+    }
+
+    return nodeId;
 }
