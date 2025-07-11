@@ -57,14 +57,17 @@ FunctionPlotter plotter = new FunctionPlotter("[-10;10]");
 String f = "exp(x) + e";
 String g = "x * x * x - 2 * x";
 String h = "cos(x)";
+String j = "x <= 0 ? 0 : x*x"; // Bedingte Funktion
 
 // AST visualisieren
 plotter.drawExpressionAST(f);
+plotter.drawExpressionAST(j); // AST der bedingten Funktion
 
-// Funktionen zeichnen (rot, blau, grün)
+// Funktionen zeichnen (rot, blau, grün, lila)
 plotter.plotFunction(f, 255, 0, 0);
 plotter.plotFunction(g, 0, 0, 255);
 plotter.plotFunction(h, 0, 255, 0);
+plotter.plotFunction(j, 128, 0, 128); // Lila für bedingte Funktion
 
 // Grafik ausgeben
 plotter.writeTurtle();

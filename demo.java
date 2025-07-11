@@ -36,9 +36,7 @@ void main() {
 
     - **Interaktives Zoomen/Verschieben**: Dynamische Anpassung des sichtbaren Bereichs im Koordinatensystem
     - **Parametrische Funktionen**: Unterstützung von Funktionen mit anpassbaren Parametern über Schieberegler
-    - **Mehrfache Funktionseingabe**: Gleichzeitige Eingabe mehrerer Funktionen über die Benutzeroberfläche
     - **Logarithmische/Lineare Achsen**: Auswählbare Achsenskalierung
-    - **Bedingte Funktionen**: Unterstützung von Ausdrücken wie `x <= 0 ? 0 : 1`
 
     ## Beispiel: Funktionsvisualisierung
 
@@ -78,15 +76,21 @@ void main() {
 
     Clerk.markdown("Funktion f(x) - <span style='color:red'>rot</span>:");
     Clerk.write(Interaction.input("./demo.java", "// fx Update", "fx = \"$\";", fx));
-    fx = "exp(x) - x^2"; // fx Update
+    fx = "exp(t-12)"; // fx Update
 
     Clerk.markdown("Funktion g(x) - <span style='color:blue'>blau</span>:");
     Clerk.write(Interaction.input("./demo.java", "// gx Update", "gx = \"$\";", gx));
-    // gx Update
+    gx = "x <= 0 ? 0 : x * x"; // gx Update
 
     Clerk.markdown("Funktion h(x) - <span style='color:green'>grün</span>:");
     Clerk.write(Interaction.input("./demo.java", "// hx Update", "hx = \"$\";", hx));
-    // hx Update
+    hx = "x sin "; // hx Update
+
+    Clerk.markdown("### Bedingte Funktionen");
+    Clerk.markdown("Der Funktionsplotter unterstützt bedingte Ausdrücke mit der Syntax `bedingung ? ausdruck_wenn_wahr : ausdruck_wenn_falsch`.");
+    Clerk.markdown("**Beispiele:**");
+    Clerk.markdown("- `x <= 0 ? 0 : x * x` - Gibt 0 zurück, wenn x ≤ 0 ist, sonst x²");
+    Clerk.markdown("- `x > 0 ? sin(x) : cos(x)` - Gibt sin(x) zurück, wenn x > 0 ist, sonst cos(x)");
 
     // FunctionPlotter mit dem Intervall initialisieren
     FunctionPlotter plotter = new FunctionPlotter(interval);

@@ -65,8 +65,21 @@ public class Tokenizer {
                 }
 
             } else {
+                // Vérifier les opérateurs à plusieurs caractères
+                if (i + 1 < input.length()) {
+                    String twoChars = input.substring(i, i + 2);
+                    if (twoChars.equals("<=") || twoChars.equals(">=") || twoChars.equals("==") || twoChars.equals("!=")) {
+                        tokens.add(new Token(TokenType.COMPARISON, twoChars));
+                        i += 2;
+                        continue;
+                    }
+                }
+
                 switch (c) {
                     case '+', '-', '*', '/', '^' -> tokens.add(new Token(TokenType.OPERATOR, String.valueOf(c)));
+                    case '<', '>' -> tokens.add(new Token(TokenType.COMPARISON, String.valueOf(c)));
+                    case '?' -> tokens.add(new Token(TokenType.QUESTION_MARK, "?"));
+                    case ':' -> tokens.add(new Token(TokenType.COLON, ":"));
                     case ',' -> tokens.add(new Token(TokenType.COMMA, ","));
                     case '(' -> tokens.add(new Token(TokenType.LEFT_PAREN, "("));
                     case ')' -> tokens.add(new Token(TokenType.RIGHT_PAREN, ")"));

@@ -12,7 +12,7 @@ import java.util.Stack;
  * Parses a mathematical expression represented as a string into an abstract syntax tree (AST).
  * This class handles the conversion from infix notation to Reverse Polish Notation (RPN),
  * and constructs the corresponding AST nodes for constants, variables, binary operations,
- * unary operations, and function calls.
+ * unary operations, function calls, comparisons and conditional expressions.
  */
 public class Parser {
 
@@ -23,7 +23,7 @@ public class Parser {
      * @return An Expr object representing the parsed expression.
      * @throws ParseException If the input cannot be parsed into a valid expression.
      */
-    public static Expr parse(String input) throws ParseException {
+public static Expr parse(String input) throws ParseException {
         List<Token> tokens = Tokenizer.tokenize(input);
         List<Token> rpnTokens = ConvertToRPN.toRPN(tokens);
 
@@ -44,15 +44,28 @@ public class Parser {
                     case VARIABLE -> stack.push(new Variable(rpnToken.value()));
 
                     case OPERATOR -> {
-                        if (stack.size() < 2) {
-                            System.out.println("Insufficient operands for operator '" +
-                                    rpnToken.value() + "' at position " + i);
-                            throw new ParseException("Insufficient operands for operator '" +
-                                    rpnToken.value() + "' at position " + i, i);
+                        // Vérifier si c'est l'opérateur spécial conditionnel
+                        if (rpnToken.value().equals("?:")) {
+                            // Structure d'une expression conditionnelle: condition, trueExpr, falseExpr, "?:"
+                            if (stack.size() < 3) {
+                                throw new ParseException("Insufficient operands for conditional expression at position " + i, i);
+                            }
+                            Expr falseExpr = stack.pop();
+                            Expr trueExpr = stack.pop();
+                            Expr condition = stack.pop();
+                            stack.push(new ConditionalExpr(condition, trueExpr, falseExpr));
+                        } else {
+                            // Opérateur binaire normal
+                            if (stack.size() < 2) {
+                                System.out.println("Insufficient operands for operator '" +
+                                        rpnToken.value() + "' at position " + i);
+                                throw new ParseException("Insufficient operands for operator '" +
+                                        rpnToken.value() + "' at position " + i, i);
+                            }
+                            Expr right = stack.pop();
+                            Expr left = stack.pop();
+                            stack.push(new BinaryOp(rpnToken.value(), left, right));
                         }
-                        Expr right = stack.pop();
-                        Expr left = stack.pop();
-                        stack.push(new BinaryOp(rpnToken.value(), left, right));
                     }
 
                     case UNARY_OPERATOR -> {
@@ -77,6 +90,18 @@ public class Parser {
                         }
                         Expr arg = stack.pop();
                         stack.push(new FunctionCall(rpnToken.value(), List.of(arg)));
+                    }
+
+                    case COMPARISON -> {
+                        if (stack.size() < 2) {
+                            System.out.println("Insufficient operands for comparison '" +
+                                    rpnToken.value() + "' at position " + i);
+                            throw new ParseException("Insufficient operands for comparison '" +
+                                    rpnToken.value() + "' at position " + i, i);
+                        }
+                        Expr right = stack.pop();
+                        Expr left = stack.pop();
+                        stack.push(new ComparisonExpr(rpnToken.value(), left, right));
                     }
 
                     default -> {

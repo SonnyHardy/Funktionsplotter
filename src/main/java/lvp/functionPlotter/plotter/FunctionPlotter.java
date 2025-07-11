@@ -397,6 +397,23 @@ public class FunctionPlotter {
             for (int i = 0; i < func.arguments().size(); i++) {
                 String argId = generateDotNodes(func.arguments().get(i), dotBuilder, counter, nodeId, "arg" + (i+1));
             }
+        } else if (expr instanceof ComparisonExpr comp) {
+            nodeLabel = comp.operator();
+            nodeColor = "#FF6347"; // Tomato pour les comparaisons
+            shape = "hexagon";
+
+            // Kindknoten erstellen
+            String leftId = generateDotNodes(comp.left(), dotBuilder, counter, nodeId, "links");
+            String rightId = generateDotNodes(comp.right(), dotBuilder, counter, nodeId, "rechts");
+        } else if (expr instanceof ConditionalExpr cond) {
+            nodeLabel = "?:";
+            nodeColor = "#FFD700"; // Or pour les conditionnelles
+            shape = "trapezium";
+
+            // Kindknoten erstellen
+            String conditionId = generateDotNodes(cond.condition(), dotBuilder, counter, nodeId, "condition");
+            String trueExprId = generateDotNodes(cond.trueExpr(), dotBuilder, counter, nodeId, "true");
+            String falseExprId = generateDotNodes(cond.falseExpr(), dotBuilder, counter, nodeId, "false");
         }
 
         // Knoten zum Graphen hinzufügen

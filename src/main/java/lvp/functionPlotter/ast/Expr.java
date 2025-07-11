@@ -6,9 +6,9 @@ import java.util.Map;
 /**
  * Represents a mathematical expression in an abstract syntax tree (AST) format.
  * This interface defines the structure for various types of expressions, including
- * binary operations, unary operations, constants, variables, and function calls.
+ * binary operations, unary operations, constants, variables, function calls, comparisons and conditionals.
  */
-public sealed interface Expr permits BinaryOp, Constant, FunctionCall, Variable, UnaryOp  {
+public sealed interface Expr permits BinaryOp, Constant, FunctionCall, Variable, UnaryOp, ComparisonExpr, ConditionalExpr  {
 
 
     /**
@@ -41,10 +41,24 @@ public sealed interface Expr permits BinaryOp, Constant, FunctionCall, Variable,
                  double operand = evaluate(unaryOp.operand(), var);
                  yield applyOperator(unaryOp.operator(), operand);
              }
-             case  FunctionCall functionCall -> {
+             case FunctionCall functionCall -> {
                  String func = functionCall.functionName().toLowerCase();
                  double arg = evaluate(functionCall.arguments().get(0), var);
                  yield applyFunction(func, arg);
+             }
+             case ComparisonExpr comparison -> {
+                 double left = evaluate(comparison.left(), var);
+                 double right = evaluate(comparison.right(), var);
+                 yield evaluateComparison(comparison.operator(), left, right);
+             }
+             case ConditionalExpr conditional -> {
+                 double conditionResult = evaluate(conditional.condition(), var);
+                 // Si la condition est évaluée à non-zéro (considérée comme vraie)
+                 if (Math.abs(conditionResult) > 1e-10) {
+                     yield evaluate(conditional.trueExpr(), var);
+                 } else {
+                     yield evaluate(conditional.falseExpr(), var);
+                 }
              }
          };
 
@@ -135,6 +149,31 @@ public sealed interface Expr permits BinaryOp, Constant, FunctionCall, Variable,
                 throw new IllegalArgumentException("Unsupported function: " + func);
             }
         };
+    }
+
+    /**
+     * Evaluates a comparison expression and returns 1.0 for true or 0.0 for false.
+     *
+     * @param operator The comparison operator (e.g., "<", ">", "<=", ">=", "==", "!=")
+     * @param left The left operand
+     * @param right The right operand
+     * @return 1.0 if the comparison is true, 0.0 if false
+     */
+    static double evaluateComparison(String operator, double left, double right) {
+        boolean result = switch (operator) {
+            case "<" -> left < right;
+            case ">" -> left > right;
+            case "<=" -> left <= right;
+            case ">=" -> left >= right;
+            case "==" -> Math.abs(left - right) < 1e-10; // Approximation for floating-point equality
+            case "!=" -> Math.abs(left - right) >= 1e-10;
+            default -> {
+                System.out.println("Unknown comparison operator: " + operator);
+                throw new IllegalArgumentException("Unknown comparison operator: " + operator);
+            }
+        };
+
+        return result ? 1.0 : 0.0;
     }
 
 }
