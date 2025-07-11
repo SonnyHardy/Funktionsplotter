@@ -31,6 +31,7 @@ void main() {
     - **Funktionsdarstellung**: Zeichnung von Funktionen in einem kartesischen Koordinatensystem
     - **Mehrfarbige Darstellung**: Verschiedene Funktionen können in unterschiedlichen Farben dargestellt werden
     - **Umfangreiche Unterstützung mathematischer Operationen**: `+`, `-`, `*`, `/`, `^`, `sqrt`, `log`, `ln`, `sin`, `cos`, `tan`, `pi`, `π`, `e` usw.
+    - **Bedingte Ausdrücke**: Unterstützung von bedingten Ausdrücken (z.B. `x <= 0 ? 0 : x * x`)
 
     ### Geplante Funktionalitäten
 
@@ -44,47 +45,39 @@ void main() {
 
     ```java
     ${0}
+    ${1}
     ```
-
-    Im obigen Beispiel wird zunächst ein Funktionsplotter mit dem Intervall `[-10;10]` initialisiert. Anschließend werden drei mathematische Funktionen definiert:
-    1. `exp(x) + e` - Die Exponentialfunktion plus der Eulerschen Zahl
-    2. `x * x * x - 2 * x` - Eine kubische Funktion
-    3. `cos(x)` - Die Kosinus-Funktion
 
     Für jede dieser Funktionen wird zuerst der abstrakte Syntaxbaum (AST) visualisiert, der die interne Struktur des mathematischen Ausdrucks zeigt. Danach werden die Funktionen im kartesischen Koordinatensystem gezeichnet, wobei jede Funktion eine eigene Farbe erhält (Rot, Blau und Grün).
 
     Am Ende wird die fertige Visualisierung ausgegeben.
-    """, Text.codeBlock("./demo.java", "// Function Plotter Example")));
+    """, Text.codeBlock("./demo.java", "// Function Plotter Example 1"),
+            Text.codeBlock("./demo.java", "// Function Plotter Example 2")));
     // Markdown 1
 
-    // Function Plotter Example
+    // Function Plotter Example 1
     // Input-Felder für Funktionen und Intervall
     Clerk.markdown("### Eingabeparameter anpassen");
 
-    // Variablen für die Eingabeparameter deklarieren
-    String interval = "[-10;10]";
-    String fx = "exp(x) + e";
-    String gx = "x * x * x - 2 * x";
-    String hx = "cos(x)";
-
     // Eingabefelder für Parameter ohne Aktualisierung
-    Clerk.markdown("**Intervall:** (Format: [min;max])");
+    Clerk.markdown("**Intervall:** (Format: [min;max]) Bitte geben Sie kein größeres Intervall als [-40;40] ein.");
+    String interval = "[-10;10]";  // interval Update
     Clerk.write(Interaction.input("./demo.java", "// Interval Update", "interval = \"$\";", interval));
-    interval = "[-10;10]"; // Interval Update
 
     Clerk.markdown("**Funktionen eingeben:**");
 
     Clerk.markdown("Funktion f(x) - <span style='color:red'>rot</span>:");
-    Clerk.write(Interaction.input("./demo.java", "// fx Update", "fx = \"$\";", fx));
-    fx = "exp(t-12)"; // fx Update
+    String fx = "exp(x -1)"; // fx Update
+    Clerk.write(Interaction.input("./demo.java", "// fx Update", "String fx = \"$\";", fx));
 
     Clerk.markdown("Funktion g(x) - <span style='color:blue'>blau</span>:");
+    String gx = "x <= 0 ? 0 : x * x";  // gx Update
     Clerk.write(Interaction.input("./demo.java", "// gx Update", "gx = \"$\";", gx));
-    gx = "x <= 0 ? 0 : x * x"; // gx Update
 
     Clerk.markdown("Funktion h(x) - <span style='color:green'>grün</span>:");
+    String hx = "cos(x)";  // hx Update
     Clerk.write(Interaction.input("./demo.java", "// hx Update", "hx = \"$\";", hx));
-    hx = "x sin "; // hx Update
+    // Function Plotter Example 1
 
     Clerk.markdown("### Bedingte Funktionen");
     Clerk.markdown("Der Funktionsplotter unterstützt bedingte Ausdrücke mit der Syntax `bedingung ? ausdruck_wenn_wahr : ausdruck_wenn_falsch`.");
@@ -92,6 +85,7 @@ void main() {
     Clerk.markdown("- `x <= 0 ? 0 : x * x` - Gibt 0 zurück, wenn x ≤ 0 ist, sonst x²");
     Clerk.markdown("- `x > 0 ? sin(x) : cos(x)` - Gibt sin(x) zurück, wenn x > 0 ist, sonst cos(x)");
 
+    // Function Plotter Example 2
     // FunctionPlotter mit dem Intervall initialisieren
     FunctionPlotter plotter = new FunctionPlotter(interval);
 
@@ -115,6 +109,6 @@ void main() {
 
     // Ergebnis als SVG-Grafik ausgeben
     plotter.writeTurtle();
-    // Function Plotter Example
+    // Function Plotter Example 2
 
 }
