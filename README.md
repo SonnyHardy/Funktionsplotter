@@ -3,17 +3,29 @@
 ## Projektbeschreibung
 Der **Funktionsplotter** ist ein leistungsstarkes Werkzeug zur Analyse und Visualisierung mathematischer Funktionen. Es ermöglicht die Eingabe, Auswertung und grafische Darstellung von mathematischen Ausdrücken, sowie die Visualisierung ihrer abstrakten Syntaxbäume (AST).
 
-## Hauptfunktionen
+## Implementierte Funktionen
 
-- **Auswertung mathematischer Ausdrücke** in Infix-Notation (z.B. `x^2 + 3*x`) und RPN-Notation (z.B. `x 2 ^ 3 * +`)
-- **Generierung und Visualisierung von AST** für jeden Ausdruck mit DOT/Graphviz
-- **Grafische Darstellung von Funktionen** in einem kartesischen Koordinatensystem
-- **Mehrfarbige Darstellung** verschiedener Funktionen
-- **Unterstützung mathematischer Operationen**: `+`, `-`, `*`, `/`, `^`, `sqrt`, `log`, `ln`, `sin`, `cos`, `tan`, `π`, `e`, etc.
+- **Ausdruckseingabe**: Funktionen können in Infix-Notation eingegeben werden (z.B. `x^2 + 3*x`) und RPN-Notation (z.B. `x 2 ^ 3 * +`)
+- **Taschenrechnermodus**: Sofortige Auswertung von Ausdrücken ohne Variablen
+- **AST-Generierung**: Erzeugung eines abstrakten Syntaxbaums für jeden Ausdruck
+- **AST-Visualisierung**: Darstellung des AST mittels DOT/Graphviz
+- **Funktionsdarstellung**: Zeichnung von Funktionen in einem kartesischen Koordinatensystem
+- **Umfangreiche Unterstützung mathematischer Operationen**: `+`, `-`, `*`, `/`, `^`, `sqrt`, `log`, `ln`, `sin`, `cos`, `tan`, `pi`, `π`, `e` usw.
+
+
+- **Bedingte Ausdrücke (`Erweiterung`)**: Unterstützung von bedingten Ausdrücken (z.B. `x <= 0 ? 0 : x * x`)
+- **Mehrfarbige Darstellung (`Erweiterung`)**: Verschiedene Funktionen können in unterschiedlichen Farben dargestellt werden
+
+## Geplante Erweiterungen (noch nicht implementiert)
+
+- **Interaktives Zoomen/Verschieben**: dynamische Anpassung des sichtbaren Bereichs im Koordinatensystem
+- **Parametrische Funktionen**: Unterstützung von Funktionen mit anpassbaren Parametern über Schieberegler
+- **Logarithmische/Lineare Achsen**: Auswählbare Achsenskalierung
 
 ## Projektstruktur
 
 - `demo.java` - Allgemeine Demo der LVP-Funktionalitäten
+- `Ausdruck.pdf` - ein Ausdruck der durch das Programm erzeugten LVP-Ansicht im Browser
 - `src/main/java/lvp/functionPlotter/` - Hauptimplementierung des Funktionsplotters
   - `plotter/` - Zeichnungsfunktionalität
   - `ast/` - Abstrakte Syntaxbaum-Implementierung
